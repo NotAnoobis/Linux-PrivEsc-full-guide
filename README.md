@@ -38,10 +38,12 @@ lsmod | cut -d ' ' -f 1 | sort --unique
 # oneliner: outputs errors(e.g the usual shadow permission denied) to file `err`
 cat {/proc/{version,issue},/etc/{passwd,shadow,group,os-release}} 2>err
 
-sudo -l                            # to check which commands I can run as a super user without the password
+# to check which commands I can run as
+# a super user without the password
+sudo -l
 ```
 
-Sudo -l is the first thing you execute after gaining a foothold, you can have some easy wins with that. After checking the output go to https://gtfobins.github.io/ and note down, the binaries which are present on the system and can be executed with the sudo command without knowing the pass.
+`sudo -l` is the first thing you execute after gaining a foothold, you can have some easy wins with that. After checking the output go to https://gtfobins.github.io/ and note down, the binaries which are present on the system and can be executed with the sudo command without knowing the pass.
 
 After executing `sudo -l` check the value of LD_PRELOAD, \
 if you see something like this: `env_keep += LD_PRELOAD` - Than you can use the following little `C src` to gain root access:
