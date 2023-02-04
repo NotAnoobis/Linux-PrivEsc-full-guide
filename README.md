@@ -38,10 +38,12 @@ lsmod | cut -d ' ' -f 1 | sort --unique
 # oneliner: outputs errors(e.g the usual shadow permission denied) to file `err`
 cat {/proc/{version,issue},/etc/{passwd,shadow,group,os-release}} 2>err
 
-sudo -l                            # to check which commands I can run as a super user without the password
+# to check which commands I can run as
+# a super user without the password
+sudo -l
 ```
 
-Sudo -l is the first thing you execute after gaining a foothold, you can have some easy wins with that. After checking the output go to https://gtfobins.github.io/ and note down, the binaries which are present on the system and can be executed with the sudo command without knowing the pass.
+`sudo -l` is the first thing you execute after gaining a foothold, you can have some easy wins with that. After checking the output go to https://gtfobins.github.io/ and note down, the binaries which are present on the system and can be executed with the sudo command without knowing the pass.
 
 After executing `sudo -l` check the value of LD_PRELOAD, \
 if you see something like this: `env_keep += LD_PRELOAD` - Than you can use the following little `C src` to gain root access:
@@ -131,19 +133,30 @@ tcpdump -i <interface> -s 65535 -w <file> # The command-line network traffic ana
 The flags setuid and setgid are needed for tasks that require different privileges than what the user is normally granted, such as the ability to alter system files or databases to change their login password. When the setuid or setgid attributes are set on an executable file, then any users able to execute the file will automatically execute the file with the privileges of the file's owner (commonly root) and/or the file's group, depending upon the flags set. I highly suggest to you to do your research on this topic because I can't cover everything in a single gitHub post.
 
 
-```
-find . -perm /6000                                                                  # Identify files where both the setuid and setgid flags are set
-find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null     # same just with a different command
+```sh
 
-Look for public exploits using Google, Exploit-db, Yandex...etc
+# Identify files where both
+# the setuid and setgid flags are set
+find . -perm /6000
 
+# same just with a different command
+find / -type f -a \( -perm -u+s -o -perm -g+s \) -exec ls -l {} \; 2> /dev/null
+
+# Look for public exploits using
+# Google, Exploit-db, Yandex...etc
+
+# strace
 strace /usr/local/bin/suid-so 2>&1 | grep -iE "open|access|no such file"          
 
-Use this commands on the binary to see the objects it's trying to load, try to overwrite objects with a reverse-shell to gain root access.
+# Use this commands on the binary to see the objects it's trying to load,
+# try to overwrite objects with a reverse-shell to gain root access.
 
 strings /usr/local/bin/example
 
-From the strings output check the paths, from where the other executables are called. Try to overwrite them with a simple bash shell, add the route to the PATH variable and execute the file.
+# From the strings output check the paths,
+# from where the other executables are called.
+# Try to overwrite them with a simple bash shell,
+# add the route to the PATH variable and execute the file.
 
 PATH=.:$PATH /usr/local/bin/example
 ./example
