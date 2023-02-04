@@ -8,4 +8,4 @@
 
 ## Resources
 - [Springer](https://link.springer.com)
-
+- [scholar](https://scholar.google.com)
