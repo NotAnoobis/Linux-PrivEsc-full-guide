@@ -1,6 +1,6 @@
 # Linux-PrivEsc-full-guide
 
-Hi Folks! I made this repo that share the privilege escalation techniques I tend to use on Linux systems. At the moment, you will see basic stuff which works the best IRL but later I am going to add CTF specific techniques. Let's get into it!
+Hi Folks! I made this repo to share the privilege escalation techniques I tend to use on Linux systems. At the moment, you will see basic stuff which works the best IRL but later I am going to add CTF specific techniques. Let's get into it!
 
 # Enumeration
 
